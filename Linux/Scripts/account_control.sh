@@ -47,19 +47,19 @@ main()
     if [ -n $ACCOUNT_CREATE ]; then
         while IFS=read -r user password; do
             create_user "$user" "$password"
-        done < $ACCOUNT_CREATE
+        done < "$ACCOUNT_CREATE"
     fi
 
     if [ -n $ACCOUNT_DELETE ]; then
         while IFS=read -r username; do
             delete_user "$username"
-        done < $ACCOUNT_DELETE
+        done < "$ACCOUNT_DELETE"
     fi
 
     if [ -n $ACCOUNT_DISABLE ]; then
         while IFS=read -r user_name; do
             disable_user "$user_name"
-        done < $ACCOUNT_DISABLE
+        done < "$ACCOUNT_DISABLE"
     fi
 
     echo "Finished"
