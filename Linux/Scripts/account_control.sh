@@ -12,7 +12,7 @@ create_user()
     if id "$username" &>/dev/null; then
         echo "User '$username' already exists."
     else
-        sudo useradd -m -s /bin/bash "$username"
+        sudo useradd "$username"
         echo -e "$password\n$password" | sudo passwd "$username"
         echo "User $username created"
     fi 
