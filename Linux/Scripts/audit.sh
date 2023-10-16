@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OUT_FILE=$1
+OUT_FILE="$1"
 CURR_USER=$(whoami)
 
 main()
