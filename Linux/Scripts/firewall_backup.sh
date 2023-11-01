@@ -1,8 +1,20 @@
 #!/bin/bash
 
+# create_copy()
+# {
+
+# }
+
 main()
 {
-    echo "I am the first of many"
+    result=$(sudo ufw status)
+    if [ "${result}" = "Status: active\n" ]; then
+        echo "ufw not enabled (have you run "sudo ufw enable?")"
+        exit 1
+    fi
+
+    echo "Printing current rules..."
+    
 } 
 
 main
