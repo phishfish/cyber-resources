@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Declares command line args   
 OPTION="$1"
 FW_CHOICE="$2"
 DIR="$3"
@@ -10,9 +11,7 @@ create_backup()
         for file in /etc/ufw/; do
             filename=$(basename "$file")
             
-            # Create a backup filename by adding a timestamp
-            timestamp=$(date +"%Y%m%d%H%M%S")
-            backup_filename="${filename%.*}_etc_backup_$timestamp.rules"
+            backup_filename="${filename%.*}_etc_backup.rules"
             
             # Copy the file to the backup directory
             sudo cp -r "$file" "$backup_dir$backup_filename"
@@ -23,9 +22,7 @@ create_backup()
         for file in /lib/ufw/; do
             filename=$(basename "$file")
             
-            # Create a backup filename by adding a timestamp
-            timestamp=$(date +"%Y%m%d%H%M%S")
-            backup_filename="${filename%.*}_lib_backup_$timestamp.rules"
+            backup_filename="${filename%.*}_lib_backup.rules"
             
             # Copy the file to the backup directory
             sudo cp -r "$file" "$backup_dir$backup_filename"
@@ -34,7 +31,7 @@ create_backup()
         done
     
     elif [ "${FW_CHOICE}" = "iptables" ]; then
-        sudo iptables-save > "$FILE/iptables_backup_$(date +'%Y%m%d%H%M%S').rules" 
+        sudo iptables-save > "$FILE/iptables_backup.rules" 
     else 
         echo "Please enter ufw or iptable rules to back up"
         exit 1
@@ -46,11 +43,11 @@ restore_backup()
 {
     # Restore UFW rules from a backup file
     if [ "${FW_CHOICE}" = "ufw" ]; then
-        for backup_file in "$backup_dir"/*_etc_backup_*.rules; do
+        for backup_file in "$DIR"/ufw_etc_backup.rules; do
             if [ -f "$backup_file" ]; then
                 # Extract the original filename from the backup filename
                 original_filename=$(basename "$backup_file" | sed 's/_etc_backup_.*\.rules/.rules')
-
+                echo "Hello"
                 # Restore the file to /etc/ufw/
                 sudo cp -r "$backup_file" "/etc/ufw/$original_filename"
 
@@ -58,7 +55,7 @@ restore_backup()
             fi
         done
 
-        for backup_file in "$backup_dir"/*_lib_backup_*.rules; do
+        for backup_file in "$DIR"/ufw_lib_backup.rules; do
             if [ -f "$backup_file" ]; then
                 # Extract the original filename from the backup filename
                 original_filename=$(basename "$backup_file" | sed 's/_lib_backup_.*\.rules/.rules')
