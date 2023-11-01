@@ -47,7 +47,6 @@ restore_backup()
             if [ -f "$backup_file" ]; then
                 # Extract the original filename from the backup filename
                 original_filename=$(basename "$backup_file" | sed 's/_etc_backup_.*\.rules/.rules')
-                echo "Hello"
                 # Restore the file to /etc/ufw/
                 sudo cp -r "$backup_file" "/etc/ufw/$original_filename"
 
