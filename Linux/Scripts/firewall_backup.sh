@@ -39,42 +39,52 @@ create_backup()
     return $?
 }
 
-restore_backup()
-{
+restore_backup() {
     # Restore UFW rules from a backup file
     if [ "${FW_CHOICE}" = "ufw" ]; then
-        for backup_file in "$DIR"/ufw_etc_backup.rules; do
-            if [ -f "$backup_file" ]; then
-                # Extract the original filename from the backup filename
-                original_filename=$(basename "$backup_file" | sed 's/_etc_backup_.*\.rules/.rules')
-                # Restore the file to /etc/ufw/
-                sudo cp -r "$backup_file" "/etc/ufw/$original_filename"
+        backup_dir="${DIR}/ufw_etc_backup.rules"
+        if [ -d "$backup_dir" ]; then
+            for item in "$backup_dir"/*; do
+                if [ -e "$item" ]; then
+                    original_filename=$(basename "$item")
+                    if [ -f "$item" ]; then
+                        sudo cp -r "$item" "/etc/ufw/$original_filename"
+                        echo "Restored $item to /etc/ufw/$original_filename"
+                    elif [ -d "$item" ]; then
+                        sudo cp -r "$item" "/etc/ufw/"
+                        echo "Restored directory $item and its contents to /etc/ufw/"
+                    fi
+                fi
+            done
+        fi
 
-                echo "Restored $backup_file to /etc/ufw/$original_filename"
-            fi
-        done
-
-        for backup_file in "$DIR"/ufw_lib_backup.rules; do
-            if [ -f "$backup_file" ]; then
-                # Extract the original filename from the backup filename
-                original_filename=$(basename "$backup_file" | sed 's/_lib_backup_.*\.rules/.rules')
-
-                # Restore the file to /lib/ufw/
-                sudo cp -r "$backup_file" "/lib/ufw/$original_filename"
-
-                echo "Restored $backup_file to /lib/ufw/$original_filename"
-            fi
-        done
+        backup_dir="${DIR}/ufw_lib_backup.rules"
+        if [ -d "$backup_dir" ]; then
+            for item in "$backup_dir"/*; do
+                if [ -e "$item" ]; then
+                    original_filename=$(basename "$item")
+                    if [ -f "$item" ]; then
+                        sudo cp -r "$item" "/lib/ufw/$original_filename"
+                        echo "Restored $item to /lib/ufw/$original_filename"
+                    elif [ -d "$item" ]; then
+                        sudo cp -r "$item" "/lib/ufw/"
+                        echo "Restored directory $item and its contents to /lib/ufw/"
+                    fi
+                fi
+            done
+        fi
     elif [ "${FW_CHOICE}" = "iptables" ]; then
-        result=$(find "${DIR}" -name "iptables_backup_*.rules")
-        sudo iptables-restore "$filename"
-    else
-        echo "Please choose to restore ufw or iptable rules" 
+        for backup_file in $(find "${DIR}" -name "iptables_backup_*.rules"); do
+            sudo iptables-restore < "$backup_file"
+            echo "Restored iptables rules from $backup_file"
+        done
+    else 
+        echo "Please choose to restore ufw or iptable rules"
         exit 1
     fi
-
     return $?
 }
+
 
 main()
 {
@@ -94,6 +104,7 @@ main()
         fi
     elif [ "${OPTION}" = "restore" ]; then
         echo "Restoring to previous backup..."
+        restore_backup
         if [ "$?" -eq 0 ]; then
             echo "Backup restored"
         else
