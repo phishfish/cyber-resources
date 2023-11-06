@@ -5,8 +5,10 @@ OPTION="$1"
 FW_CHOICE="$2"
 DIR="$3"
 
+# This function audits the current iptable and ufw rules
 audit_rules()
 {
+    # Audits rules to firewall_rules.txt
     echo "Auditing firewall rules to firewall_rules.txt..."
     echo "Iptable rules:" > firewall_rules.txt
     sudo iptables -L -n >> firewall_rules.txt
@@ -55,7 +57,9 @@ create_backup()
     return $?
 }
 
-restore_backup() {
+# Restores rules from a directory passed in
+restore_backup() 
+{
     # Restore UFW rules from a backup file
     if [ "${FW_CHOICE}" = "ufw" ]; then
         backup_dir="${DIR}/ufw_etc_backup.rules"
@@ -101,6 +105,48 @@ restore_backup() {
     return $?
 }
 
+# Creates a new firewall rule from the user
+create_rule()
+{
+    echo "ufw, iptable, or a rule for both?"
+    read USER_CHOICE
+
+    case $USER_CHOICE in
+    ufw) 
+    echo "Enter the rule you want to create: "
+    read USER_RULE
+    result=$(USER_RULE)
+    ;;
+    iptable)
+    ;;
+    *)
+    echo "Please enter a legitimate choice"
+
+    return result
+}
+
+# Deletes a firewall (if it exists) from the user
+delete_rule()
+{
+    echo "Delete a ufw rule, iptable rule, or both?"
+    read USER_CHOICE
+
+    case $USER_CHOICE in
+    ufw)
+    echo "Enter the rule you want deleted: "
+    read USER_CHOICE
+    result=$(USER_CHOICE)
+    ;;
+    iptable)
+    echo "Enter the rule you want deleted: "
+    read USER_CHOICE
+    result=$(USER_CHOICE)
+    ;;
+    *)
+    echo "Please enter a legitimate choice"
+
+    return return
+}
 
 main()
 {
