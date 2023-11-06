@@ -156,28 +156,43 @@ main()
         exit 1
     fi
 
-    echo "Please choose an action from the menu: "
-    echo "1) Audit current firewall rules"
-    echo "2) Backup current firewall rules"
-    echo "3) Restore firewalls to last backup"
-    echo "4) Create a new firewall rule"
-    echo "5) Delete an existing firewall rule"
-    read USER_CHOICE
+    END_VAR=false
 
-    case $USER_CHOICE in
-    1)
-    ;;
-    2)
-    ;;
-    3)
-    ;;
-    4)
-    ;;
-    5)
-    ;;
-    *)
-    ;;
-    esac
+    while [ "$END_VAR" = false ]
+    do
+        echo "Please choose an action from the menu: "
+        echo "1) Audit current firewall rules"
+        echo "2) Backup current firewall rules"
+        echo "3) Restore firewalls to last backup"
+        echo "4) Create a new firewall rule"
+        echo "5) Delete an existing firewall rule"
+        echo "6) Type quit to quit"
+        read USER_CHOICE
+
+        case $USER_CHOICE in
+        1)
+        audit_rules
+        ;;
+        2)
+        create_backup
+        ;;
+        3)
+        restore_backup
+        ;;
+        4)
+        create_rule
+        ;;
+        5)
+        delete_rule
+        ;;
+        6)
+        END_VAR=true
+        ;;
+        *)
+        echo "Improper usage, please "
+        ;;
+        esac
+    done
 
     if [ "${OPTION}" = "backup" ]; then
         echo "Backing up current rules..."
@@ -199,8 +214,6 @@ main()
         echo "Improper usage (please run in "./firewall_backup.sh \<backup/restore\> \<ufw or iptables\> \<directory storing backups\>" format)"
         exit 1
     fi
-
-    echo "Program has finished"
 } 
 
 main
