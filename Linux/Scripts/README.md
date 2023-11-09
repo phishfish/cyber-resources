@@ -5,4 +5,4 @@ password_reset.sh resets the passwords of users from a file given at command lin
 
 account_control.sh creates, deletes, and disables users from three files given at command line. Run the script as "./account_control.sh <users-to-be-created> <users-to-be-deleted> <users-to-be-disabled>". For the file containing users to be created, seperate the username from the password with a ':' (example: Mr.Cat:meow).
 
-firewall_backup.sh takes 3 command line arguments to restore and backup fire wall rules in /lib/ufw/, /etc/ufw/, and iptables
+firewall_actions.sh - Backs up all files in /lib/ufw/, iptables, and /etc/ufw/, also restores from backups, and finally audits firewall rules to stdout and a file.
